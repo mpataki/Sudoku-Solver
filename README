@@ -1,5 +1,16 @@
 This project is a command line Sudoku puzzle solver written in Ruby (just for fun).
 
-It is not yet complete, so bare with me.
+It can currently solve most simple puzzles. More strategies to come.
 
-To use the solver, use the command line to enter the values of the puzzle starting from the top left and ending with the bottom right. Any blank boxes can be represented by an "x" (or any other letter).
+To use the solver, use the command line to enter the values of the puzzle starting from the top left and ending with the bottom right. Any blank boxes can be represented by an "x" (or any other letter). Numbers can be separated by spaces or new lines.
+
+Ex. 
+7 x x x 1 x x 3 4
+1 x 2 x x x 7 9 x
+x 9 x x x 7 x x 1
+9 x 1 x x 2 x x x
+5 x 6 9 4 1 8 x 2
+x x x 6 x x 1 x 9
+3 x x 8 x x x 2 x
+x 6 5 x x x 9 x 8
+8 7 x x 2 x x x 3
