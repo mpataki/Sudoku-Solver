@@ -31,7 +31,7 @@ class Cell
 end
 
 class Board 
-	def initialize()
+	def initialize
 		@board = Matrix.build(9, 9) {Cell.new}
 	end
 
@@ -56,6 +56,55 @@ class Board
 		@board
 	end
 
+	def find_offset num
+		if num <= 2
+			0
+		elsif num <= 5
+			3
+		else
+			6
+		end
+	end
+
+	def remove_square_possibilities val, x, y
+		xOffset = find_offset(x)
+		yOffset = find_offset(y)
+		0.upto(2){
+			|xPos|
+			0.upto(2){
+				|yPos|
+				val2 = @board[xPos+xOffset, yPos+yOffset].remove_possibility(val.to_i)
+				if val2 != 0
+					assign_value(val2, xPos+xOffset, yPos+yOffset)
+				end
+			}
+		}
+	end
+
+	def check_square x, y
+		xOffset = find_offset(x)
+		yOffset = find_offset(y)
+		xOffset.upto(xOffset+2){
+			|x|
+			yOffset.upto(yOffset+2){
+				|y|
+				tempSet = @board[x, y].possible_values
+				0.upto(2){
+					|xPos|
+					0.upto(2){
+						|yPos|
+						if xPos != x && yPos != y
+							tempSet = tempSet-@board[xPos+xOffset, yPos+yOffset].possible_values
+						end
+					}
+				}
+				if tempSet.size == 1
+					assign_value(tempSet.to_a[0], x, y)
+				end
+			}
+		}
+	end
+
 	def assign_value val, x, y
 		@board[x,y].value = val
 		#remove linear possibilities
@@ -70,32 +119,8 @@ class Board
 				assign_value(val2, k, y)
 			end
 		}
-		#remove square possibilities
-		if x <= 2
-			xOffset = 0
-		elsif x <= 5
-			xOffset = 3
-		else
-			xOffset = 6
-		end
-		if y <= 2
-			yOffset = 0
-		elsif y <= 5
-			yOffset = 3
-		else
-			yOffset = 6
-		end
-		0.upto(2){
-			|xPos|
-			0.upto(2){
-				|yPos|
-				val2 = @board[xPos+xOffset, yPos+yOffset].remove_possibility(val.to_i)
-				if val2 != 0
-					assign_value(val2, xPos+xOffset, yPos+yOffset)
-				end
-			}
-		}
-
+		remove_square_possibilities(val, x, y)
+		check_square(x, y)
 	end
 
 	def read_board
