@@ -160,7 +160,7 @@ class Board
 			remove_linear_possibilities val, x, y
 			remove_square_possibilities val, x, y
 			@solved_counter += 1
-		end
+		end 
 	end
 
 	def solved_counter
