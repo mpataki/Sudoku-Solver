@@ -10,19 +10,31 @@ class Cell
 
 	def value= value
 		@value = value
+		@possible_values.clear
+		@possible_values << value.to_i
+		@solved = true
 	end
 
 	def initialize()
 		@possible_values = Set.new [1,2,3,4,5,6,7,8,9]
 		@value = " "
+		@solved = false
 	end
 
-	# if only one possibility remains, return that value, otherwise return 0
+	def solved
+		@solved
+	end
+
+	# if only one possibility remains, return that value, 
+	# otherwise return 0
 	def remove_possibility(k)
-		@possible_values.delete(k) 
-		if @possible_values.size == 1 && @value == " "
-			@possible_values.to_a[0]
-		else 0 end
+		if !@solved
+			@possible_values.delete(k) 
+			if @possible_values.size == 1
+				return @possible_values.to_a[0]
+			end
+		end
+		return 0
 	end
 
 	def possible_values
@@ -33,6 +45,7 @@ end
 class Board 
 	def initialize
 		@board = Matrix.build(9, 9) {Cell.new}
+		@solved_counter = 0
 	end
 
 	def print_board
@@ -56,6 +69,10 @@ class Board
 		@board
 	end
 
+	def solved?
+		return @solved_counter >= 81
+	end
+
 	def find_offset num
 		if num <= 2
 			0
@@ -69,15 +86,35 @@ class Board
 	def remove_square_possibilities val, x, y
 		xOffset = find_offset(x)
 		yOffset = find_offset(y)
-		0.upto(2){
+		xOffset.upto(xOffset+2){
 			|xPos|
-			0.upto(2){
+			yOffset.upto(yOffset+2){
 				|yPos|
-				val2 = @board[xPos+xOffset, yPos+yOffset].remove_possibility(val.to_i)
-				if val2 != 0
-					assign_value(val2, xPos+xOffset, yPos+yOffset)
+				if xPos != x || yPos != y
+					val2 = @board[xPos, yPos].remove_possibility(val)
+					if val2 != 0
+						assign_value(val2, xPos, yPos)
+					end
 				end
 			}
+		}
+	end
+
+	def remove_linear_possibilities val, x, y
+		0.upto(8){
+			|k|
+			if k != y 
+				val2 = @board[x, k].remove_possibility(val)
+				if val2 != 0
+					assign_value(val2, x, k)
+				end
+			end
+			if k != x
+				val2 = @board[k, y].remove_possibility(val)
+				if val2 != 0
+					assign_value(val2, k, y)
+				end
+			end
 		}
 	end
 
@@ -88,39 +125,46 @@ class Board
 			|x|
 			yOffset.upto(yOffset+2){
 				|y|
-				tempSet = @board[x, y].possible_values
-				0.upto(2){
-					|xPos|
-					0.upto(2){
-						|yPos|
-						if xPos != x && yPos != y
-							tempSet = tempSet-@board[xPos+xOffset, yPos+yOffset].possible_values
-						end
+				if !@board[x, y].solved 
+					tempSet = @board[x, y].possible_values
+					xOffset.upto(xOffset+2){
+						|xPos|
+						yOffset.upto(yOffset+2){
+							|yPos|
+							if xPos != x && yPos != y
+								tempSet = tempSet-@board[xPos, yPos].possible_values
+							end
+						}
 					}
-				}
-				if tempSet.size == 1
-					assign_value(tempSet.to_a[0], x, y)
+					if tempSet.size == 1
+						assign_value(tempSet[0], x, y)
+					end
 				end
 			}
 		}
 	end
 
-	def assign_value val, x, y
-		@board[x,y].value = val
-		#remove linear possibilities
-		0.upto(8){
-			|k|
-			val2 = @board[x, k].remove_possibility(val.to_i)
-			if val2 != 0
-				assign_value(val2, x, k)
-			end
-			val2 = @board[k, y].remove_possibility(val.to_i)
-			if val2 != 0
-				assign_value(val2, k, y)
-			end
+	def solve_square_sets
+		0.upto(2) {
+			|x|
+			0.upto(2){
+				|y|
+				check_square x*3, y*3
+			}
 		}
-		remove_square_possibilities(val, x, y)
-		check_square(x, y)
+	end
+
+	def assign_value val, x, y
+		if !@board[x,y].solved
+			@board[x,y].value = val
+			remove_linear_possibilities val, x, y
+			remove_square_possibilities val, x, y
+			@solved_counter += 1
+		end
+	end
+
+	def solved_counter
+		@solved_counter
 	end
 
 	def read_board
@@ -129,8 +173,11 @@ class Board
 		puts "Enter a puzzle"
 		STDIN.read.split(" " || "\n").each do |input|
 			i = input.to_i
-			if i >= 1 && i <= 9
-				assign_value(input, x, y)
+			if @board[x, y].solved
+				puts "read #{input} but was solved as #{@board[x,y].value}" 
+			end
+			if i >= 1 && i <= 9 && !@board[x, y].solved
+				assign_value(input.to_i, x, y)
 			end
    			x==8 ? y=(y+1)%9 : nil
    			x = (x+1)%9 
@@ -141,4 +188,16 @@ end
 # MAIN PROGRAM
 puzzle = Board.new
 puzzle.read_board
+0.upto(999) {
+	puzzle.solved? ? break : nil
+	puzzle.solve_square_sets
+}
 puzzle.print_board
+0.upto(8){
+	|x|
+	0.upto(8){
+		|y|
+		print "#{x},#{y}: ", puzzle.board[x,y].possible_values, "\n"
+	}
+}
+puts puzzle.solved_counter
