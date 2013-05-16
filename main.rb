@@ -131,7 +131,7 @@ class Board
 						|xPos|
 						yOffset.upto(yOffset+2){
 							|yPos|
-							if xPos != x && yPos != y
+							if xPos != x || yPos != y
 								tempSet = tempSet-@board[xPos, yPos].possible_values
 							end
 						}
@@ -160,7 +160,7 @@ class Board
 			remove_linear_possibilities val, x, y
 			remove_square_possibilities val, x, y
 			@solved_counter += 1
-		end 
+		end
 	end
 
 	def solved_counter
@@ -188,7 +188,7 @@ end
 # MAIN PROGRAM
 puzzle = Board.new
 puzzle.read_board
-0.upto(999) {
+0.upto(100) {
 	puzzle.solved? ? break : nil
 	puzzle.solve_square_sets
 }
