@@ -154,6 +154,11 @@ class Board
 		}
 	end
 
+	# The array is used as follows: Each index position represents a possible value,
+	# and the value stored at that index is the y coordinate of where the value occurs.
+	# If a value exists as a possibility in more than one y coordinate, the index position
+	# will be set to -1 since we are only looking for singles. Once we have looked at the
+	# whole row any array position not equal to nil or -1 are singles, and can be assigned.
 	def hidden_singles_row y
 		arr = Array.new
 		0.upto(8) {
@@ -177,6 +182,7 @@ class Board
 		}
 	end
 
+	# Works the same as hidden_singles_row above.
 	def hidden_singles_col x
 		arr = Array.new
 		0.upto(8) {
