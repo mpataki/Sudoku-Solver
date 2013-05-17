@@ -128,29 +128,32 @@ class Board
 		}
 	end
 
+	# Uses the same technique as in the simpler row and column versions below
 	def hidden_singles_block x, y
 		xOffset = find_offset(x)
 		yOffset = find_offset(y)
+		arr = Array.new
 		xOffset.upto(xOffset+2){
 			|x|
 			yOffset.upto(yOffset+2){
 				|y|
-				if !@board[x, y].solved 
-					tempSet = @board[x, y].possible_values
-					xOffset.upto(xOffset+2){
-						|xPos|
-						yOffset.upto(yOffset+2){
-							|yPos|
-							if xPos != x || yPos != y
-								tempSet = tempSet-@board[xPos, yPos].possible_values
-							end
-						}
+				if !@board[x,y].solved 
+					@board[x,y].possible_values.each {
+						|elm|
+						if arr[elm] == nil
+							arr[elm] = [x,y]
+						else  
+							arr[elm] = -1
+						end
 					}
-					if tempSet.size == 1
-						assign_value(tempSet[0], x, y)
-					end
 				end
 			}
+		}
+		1.upto(9){
+			|i|
+			if arr[i] != nil && arr[i] != -1
+				assign_value(i, arr[i][0], arr[i][1])
+			end
 		}
 	end
 
