@@ -65,6 +65,16 @@ class Board
 		}
 	end
 
+	def print_possibilities
+		0.upto(8){
+			|x|
+			0.upto(8){
+				|y|
+				print "#{x},#{y}: ", @board[x,y].possible_values, "\n"
+			}
+		}
+	end
+
 	def board
 		@board
 	end
@@ -118,7 +128,7 @@ class Board
 		}
 	end
 
-	def check_square x, y
+	def hidden_singles_block x, y
 		xOffset = find_offset(x)
 		yOffset = find_offset(y)
 		xOffset.upto(xOffset+2){
@@ -144,13 +154,64 @@ class Board
 		}
 	end
 
-	def solve_square_sets
+	def hidden_singles_row y
+		arr = Array.new
+		0.upto(8) {
+			|x|
+			if !@board[x,y].solved
+				@board[x,y].possible_values.each {
+					|elm|
+					if arr[elm] == nil
+						arr[elm] = x
+					else  
+						arr[elm] = -1
+					end
+				}
+			end
+		}
+		1.upto(9){
+			|i|
+			if arr[i] != nil && arr[i] != -1
+				assign_value(i, arr[i], y)
+			end
+		}
+	end
+
+	def hidden_singles_col x
+		arr = Array.new
+		0.upto(8) {
+			|y|
+			if !@board[x,y].solved
+				@board[x,y].possible_values.each {
+					|elm|
+					if arr[elm] == nil
+						arr[elm] = y
+					else  
+						arr[elm] = -1
+					end
+				}
+			end
+		}
+		1.upto(9){
+			|i|
+			if arr[i] != nil && arr[i] != -1
+				assign_value(i, x, arr[i])
+			end
+		}
+	end
+
+	def find_hidden_singles
 		0.upto(2) {
 			|x|
 			0.upto(2){
 				|y|
-				check_square x*3, y*3
+				hidden_singles_block x*3, y*3
 			}
+		}
+		0.upto(8){
+			|k|
+			hidden_singles_row k
+			hidden_singles_col k
 		}
 	end
 
@@ -190,14 +251,8 @@ puzzle = Board.new
 puzzle.read_board
 0.upto(100) {
 	puzzle.solved? ? break : nil
-	puzzle.solve_square_sets
+	puzzle.find_hidden_singles
 }
 puzzle.print_board
-0.upto(8){
-	|x|
-	0.upto(8){
-		|y|
-		print "#{x},#{y}: ", puzzle.board[x,y].possible_values, "\n"
-	}
-}
+puzzle.print_possibilities
 puts puzzle.solved_counter
