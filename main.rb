@@ -225,7 +225,7 @@ class Board
 		0.upto(7) {
 			|y|
 			cands = @board[x,y].candidates
-			counter = @board[x,y].candidates.size
+			counter = @board[x,y].candidates.size - 1
 			(y+1).upto(7) {
 				|y2|
 				if @board[x,y2].candidates == cands
@@ -254,7 +254,7 @@ class Board
 		0.upto(7) {
 			|x|
 			cands = @board[x,y].candidates
-			counter = @board[x,y].candidates.size
+			counter = @board[x,y].candidates.size - 1
 			(x+1).upto(7) {
 				|x2|
 				if @board[x2,y].candidates == cands
