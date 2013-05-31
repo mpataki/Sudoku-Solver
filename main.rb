@@ -209,19 +209,61 @@ class Board
 		}
 	end
 
-	def naked_pair_row y
-			# Array used to store x,y coordinates of cell with 
-			# possible value of size equal to index position.
-		arr = Array.new
+	def naked_pair_eliminate_col x, cands
+		0.upto(8) {
+			|y|
+			if @board[x,y].candidates != cands 
+				cands.each {
+					|cand|
+					@board[x,y].remove_candidate cand
+				}
+			end
+		}
+	end
+
+	def naked_pair_col x
+		0.upto(7) {
+			|y|
+			cands = @board[x,y].candidates
+			counter = @board[x,y].candidates.size
+			(y+1).upto(7) {
+				|y2|
+				if @board[x,y2].candidates == cands
+					counter = counter - 1
+					if counter == 0
+						naked_pair_eliminate_col x, cands
+					end
+				end
+			}
+		}
+	end
+
+	def naked_pair_eliminate_row y, cands
 		0.upto(8) {
 			|x|
-			size = @board[x,y].candidates.size
-			arr[size] = Array.new
-			arr[size] << x << y
+			if @board[x,y].candidates != cands
+				cands.each {
+					|cand|
+					@board[x,y].remove_candidate cand
+				}
+			end
 		}
-		arr.each {
-			|elm|
+	end
 
+	def naked_pair_row y
+		0.upto(7) {
+			|x|
+			cands = @board[x,y].candidates
+			counter = @board[x,y].candidates.size
+			(x+1).upto(7) {
+				|x2|
+				if @board[x2,y].candidates == cands
+					counter = counter - 1
+					if counter == 0
+						naked_pair_eliminate_row y, cands
+					end
+				end
+			}
 		}
 	end
 
@@ -236,8 +278,9 @@ class Board
 		0.upto(8){
 			|k|
 			hidden_singles_row k
-			# naked_pair_row k
 			hidden_singles_col k
+			naked_pair_row k
+			naked_pair_col k
 		}
 	end
 
