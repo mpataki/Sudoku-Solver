@@ -10,13 +10,13 @@ class Cell
 
 	def value= value
 		@value = value
-		@possible_values.clear
-		@possible_values << value.to_i
+		@candidates.clear
+		@candidates << value.to_i
 		@solved = true
 	end
 
-	def initialize()
-		@possible_values = Set.new [1,2,3,4,5,6,7,8,9]
+	def initialize
+		@candidates = Set.new [1,2,3,4,5,6,7,8,9]
 		@value = " "
 		@solved = false
 	end
@@ -25,20 +25,20 @@ class Cell
 		@solved
 	end
 
-	# if only one possibility remains, return that value, 
+	# if only one candidate remains, return that value, 
 	# otherwise return 0
-	def remove_possibility(k)
+	def remove_candidate k
 		if !@solved
-			@possible_values.delete(k) 
-			if @possible_values.size == 1
-				return @possible_values.to_a[0]
+			@candidates.delete k
+			if @candidates.size == 1
+				return @candidates.to_a[0]
 			end
 		end
 		return 0
 	end
 
-	def possible_values
-		@possible_values.to_a
+	def candidates
+		@candidates.to_a
 	end
 end
 
@@ -70,7 +70,7 @@ class Board
 			|x|
 			0.upto(8){
 				|y|
-				print "#{x},#{y}: ", @board[x,y].possible_values, "\n"
+				print "#{x},#{y}: ", @board[x,y].candidates, "\n"
 			}
 		}
 	end
@@ -101,7 +101,7 @@ class Board
 			yOffset.upto(yOffset+2){
 				|yPos|
 				if xPos != x || yPos != y
-					val2 = @board[xPos, yPos].remove_possibility(val)
+					val2 = @board[xPos, yPos].remove_candidate(val)
 					if val2 != 0
 						assign_value(val2, xPos, yPos)
 					end
@@ -114,13 +114,13 @@ class Board
 		0.upto(8){
 			|k|
 			if k != y 
-				val2 = @board[x, k].remove_possibility(val)
+				val2 = @board[x, k].remove_candidate(val)
 				if val2 != 0
 					assign_value(val2, x, k)
 				end
 			end
 			if k != x
-				val2 = @board[k, y].remove_possibility(val)
+				val2 = @board[k, y].remove_candidate(val)
 				if val2 != 0
 					assign_value(val2, k, y)
 				end
@@ -138,7 +138,7 @@ class Board
 			yOffset.upto(yOffset+2){
 				|y|
 				if !@board[x,y].solved 
-					@board[x,y].possible_values.each {
+					@board[x,y].candidates.each {
 						|elm|
 						if arr[elm] == nil
 							arr[elm] = [x,y]
@@ -159,7 +159,7 @@ class Board
 
 	# The array is used as follows: Each index position represents a possible value,
 	# and the value stored at that index is the y coordinate of where the value occurs.
-	# If a value exists as a possibility in more than one y coordinate, the index position
+	# If a value exists as a candidate in more than one y coordinate, the index position
 	# will be set to -1 since we are only looking for singles. Once we have looked at the
 	# whole row any array position not equal to nil or -1 are singles, and can be assigned.
 	def hidden_singles_row y
@@ -167,7 +167,7 @@ class Board
 		0.upto(8) {
 			|x|
 			if !@board[x,y].solved
-				@board[x,y].possible_values.each {
+				@board[x,y].candidates.each {
 					|elm|
 					if arr[elm] == nil
 						arr[elm] = x
@@ -191,7 +191,7 @@ class Board
 		0.upto(8) {
 			|y|
 			if !@board[x,y].solved
-				@board[x,y].possible_values.each {
+				@board[x,y].candidates.each {
 					|elm|
 					if arr[elm] == nil
 						arr[elm] = y
@@ -209,7 +209,23 @@ class Board
 		}
 	end
 
-	def find_hidden_singles
+	def naked_pair_row y
+			# Array used to store x,y coordinates of cell with 
+			# possible value of size equal to index position.
+		arr = Array.new
+		0.upto(8) {
+			|x|
+			size = @board[x,y].candidates.size
+			arr[size] = Array.new
+			arr[size] << x << y
+		}
+		arr.each {
+			|elm|
+
+		}
+	end
+
+	def find_HS_NP
 		0.upto(2) {
 			|x|
 			0.upto(2){
@@ -220,6 +236,7 @@ class Board
 		0.upto(8){
 			|k|
 			hidden_singles_row k
+			# naked_pair_row k
 			hidden_singles_col k
 		}
 	end
@@ -260,7 +277,7 @@ puzzle = Board.new
 puzzle.read_board
 0.upto(100) {
 	puzzle.solved? ? break : nil
-	puzzle.find_hidden_singles
+	puzzle.find_HS_NP
 }
 puzzle.print_board
 puzzle.print_possibilities
