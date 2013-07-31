@@ -1,0 +1,35 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Board	board.rb	/^class Board $/;"	c
+Cell	cell.rb	/^class Cell$/;"	c
+assign_value	board.rb	/^	def assign_value val, x, y$/;"	f	class:Board
+board	board.rb	/^	def board$/;"	f	class:Board
+candidates	cell.rb	/^	def candidates$/;"	f	class:Cell
+find_HS_NT	board.rb	/^	def find_HS_NT$/;"	f	class:Board
+find_offset	board.rb	/^	def find_offset num$/;"	f	class:Board
+hidden_singles_block	board.rb	/^	def hidden_singles_block x, y$/;"	f	class:Board
+hidden_singles_col	board.rb	/^	def hidden_singles_col x$/;"	f	class:Board
+hidden_singles_row	board.rb	/^	def hidden_singles_row y$/;"	f	class:Board
+initialize	board.rb	/^	def initialize$/;"	f	class:Board
+initialize	cell.rb	/^	def initialize$/;"	f	class:Cell
+naked_tuple_block	board.rb	/^	def naked_tuple_block x, y$/;"	f	class:Board
+naked_tuple_col	board.rb	/^	def naked_tuple_col x$/;"	f	class:Board
+naked_tuple_eliminate_block	board.rb	/^	def naked_tuple_eliminate_block x, y, cands$/;"	f	class:Board
+naked_tuple_eliminate_col	board.rb	/^	def naked_tuple_eliminate_col x, cands$/;"	f	class:Board
+naked_tuple_eliminate_row	board.rb	/^	def naked_tuple_eliminate_row y, cands$/;"	f	class:Board
+naked_tuple_row	board.rb	/^	def naked_tuple_row y$/;"	f	class:Board
+print_board	board.rb	/^	def print_board$/;"	f	class:Board
+print_possibilities_x	board.rb	/^	def print_possibilities_x$/;"	f	class:Board
+read_board	board.rb	/^	def read_board$/;"	f	class:Board
+remove_candidate	cell.rb	/^	def remove_candidate k$/;"	f	class:Cell
+remove_linear_possibilities	board.rb	/^	def remove_linear_possibilities val, x, y$/;"	f	class:Board
+remove_square_possibilities	board.rb	/^	def remove_square_possibilities val, x, y$/;"	f	class:Board
+solved	cell.rb	/^	def solved$/;"	f	class:Cell
+solved?	board.rb	/^	def solved?$/;"	f	class:Board
+solved_counter	board.rb	/^	def solved_counter$/;"	f	class:Board
+value	cell.rb	/^	def value$/;"	f	class:Cell
+value=	cell.rb	/^	def value= value$/;"	f	class:Cell

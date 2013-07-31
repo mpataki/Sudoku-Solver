@@ -27,11 +27,23 @@ class Board
 		}
 	end
 
-	def print_possibilities
+	def print_possibilities_x
+		puts "\nPrinting x-sorted possibilities\n"
 		0.upto(8){
 			|x|
 			0.upto(8){
 				|y|
+				print "#{x},#{y}: ", @board[x,y].candidates, "\n"
+			}
+		}
+	end
+
+	def print_possibilities_y
+		puts "\nPrinting y-sorted possibilities\n"
+		0.upto(8){
+			|y|
+			0.upto(8){
+				|x|
 				print "#{x},#{y}: ", @board[x,y].candidates, "\n"
 			}
 		}
@@ -123,7 +135,7 @@ class Board
 	# and the value stored at that index is the y coordinate of where the value occurs.
 	# If a value exists as a candidate in more than one y coordinate, the index position
 	# will be set to -1 since we are only looking for singles. Once we have looked at the
-	# whole row any array position not equal to nil or -1 are singles, and can be assigned.
+	# whole row, any array position not equal to nil or -1 are singles, and can be assigned.
 	def hidden_singles_row y
 		arr = Array.new
 		0.upto(8) {
